@@ -19,11 +19,10 @@ var passwordLength int
 var useDigitsAnswer string
 var useLettersAnswer string
 var specialSymbolsAnswer string
+var positiveResponse string = "yes"
 
 func generatePassword(length int, useDigits, useLetters, specialSymbols string) string {
 	var runes []rune
-
-	positiveResponse := "yes"
 
 	if useDigitsAnswer == positiveResponse {
 		runes = append(runes, []rune(digits)...)
@@ -33,9 +32,6 @@ func generatePassword(length int, useDigits, useLetters, specialSymbols string) 
 	}
 	if specialSymbolsAnswer == positiveResponse {
 		runes = append(runes, []rune(symbols)...)
-	}
-	if useDigitsAnswer != positiveResponse && useLettersAnswer != positiveResponse && specialSymbolsAnswer != positiveResponse {
-		fmt.Println("What the f*ck do you want !?")
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -69,6 +65,10 @@ func main() {
 
 	fmt.Println(green("Can i use special symbols?  (yes or no)"))
 	fmt.Scan(&specialSymbolsAnswer)
+
+	if useDigitsAnswer != positiveResponse && useLettersAnswer != positiveResponse && specialSymbolsAnswer != positiveResponse {
+		fmt.Println(red("I can't make the password for you with your answers("))
+	}
 
 	length := passwordLength
 	useDigits := useDigitsAnswer
