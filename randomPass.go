@@ -16,10 +16,7 @@ const (
 )
 
 var passwordLength int
-var useDigitsAnswer string
-var useLettersAnswer string
-var specialSymbolsAnswer string
-var forWhat string
+var useDigitsAnswer, useLettersAnswer, specialSymbolsAnswer, forWhat string
 var positiveResponse string = "yes"
 
 func generatePassword(length int, useDigits, useLetters, specialSymbols string) string {
