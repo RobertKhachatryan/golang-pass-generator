@@ -19,6 +19,7 @@ var passwordLength int
 var useDigitsAnswer string
 var useLettersAnswer string
 var specialSymbolsAnswer string
+var forWhat string
 var positiveResponse string = "yes"
 
 func generatePassword(length int, useDigits, useLetters, specialSymbols string) string {
@@ -49,15 +50,25 @@ func main() {
 	green := color.New(color.FgGreen).SprintFunc()
 	red := color.New(color.FgRed).SprintFunc()
 
+	passFile, createError := os.OpenFile("passwords.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if createError != nil {
+		fmt.Println(red("Error - ", createError))
+		return
+	}
+	defer passFile.Close()
+
+	fmt.Println(green("What do you want to create a password for?"))
+	fmt.Scan(&forWhat)
+
 	fmt.Println(green("Write password length"))
 	fmt.Scan(&passwordLength)
 
 	if passwordLength < 8 {
-		fmt.Println(red("Password must be contains 8 symbols.Try Again"))
+		fmt.Println(red("Password must contain at least 8 characters.Try Again"))
 		os.Exit(0)
 	}
 
-	fmt.Println(green("if you want to use digits in your password - write <<yes>> or <<no>>"))
+	fmt.Println(green("If you want to use numbers in your password - write <<yes>> or <<no>>"))
 	fmt.Scan(&useDigitsAnswer)
 
 	fmt.Println(green("And if you want to use letters in your password - write <<yes>> or <<no>>"))
@@ -76,5 +87,8 @@ func main() {
 	specialSymbols := specialSymbolsAnswer
 
 	password := generatePassword(length, useDigits, useLetters, specialSymbols)
-	fmt.Println("Your password:", password)
+
+	passFile.WriteString(forWhat + " : " + password + "\n")
+
+	fmt.Println(green("Your password is:"), password, green("And saved in passwords.txt file"))
 }
