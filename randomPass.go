@@ -16,23 +16,21 @@ const (
 )
 
 var passwordLength int
-var useDigitsAnswer, useLettersAnswer, specialSymbolsAnswer, forWhat string
+var useDigitsAnswer, specialSymbolsAnswer, forWhat string
 var positiveResponse string = "yes"
 
-func generatePassword(length int, useDigits, useLetters, specialSymbols string) string {
+func generatePassword(length int, useDigits, specialSymbols string) string {
 	var runes []rune
 
+	runes = append(runes, []rune(letters)...)
 	if useDigitsAnswer == positiveResponse {
 		runes = append(runes, []rune(digits)...)
-	}
-	if useLettersAnswer == positiveResponse {
-		runes = append(runes, []rune(letters)...)
 	}
 	if specialSymbolsAnswer == positiveResponse {
 		runes = append(runes, []rune(symbols)...)
 	}
 
-	rand.Seed(time.Now().UnixNano())
+	rand.NewSource(time.Now().UnixNano())
 
 	password := make([]rune, length)
 	for i := range password {
@@ -49,7 +47,7 @@ func main() {
 
 	passFile, createError := os.OpenFile("passwords.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if createError != nil {
-		fmt.Println(red("Error - ", createError))
+		fmt.Println(red("Error - "))
 		return
 	}
 	defer passFile.Close()
@@ -68,22 +66,18 @@ func main() {
 	fmt.Println(green("If you want to use numbers in your password - write <<yes>> or <<no>>"))
 	fmt.Scan(&useDigitsAnswer)
 
-	fmt.Println(green("And if you want to use letters in your password - write <<yes>> or <<no>>"))
-	fmt.Scan(&useLettersAnswer)
-
 	fmt.Println(green("Can i use special symbols?  (yes or no)"))
 	fmt.Scan(&specialSymbolsAnswer)
 
-	if useDigitsAnswer != positiveResponse && useLettersAnswer != positiveResponse && specialSymbolsAnswer != positiveResponse {
+	if useDigitsAnswer != positiveResponse && specialSymbolsAnswer != positiveResponse {
 		fmt.Println(red("I can't make the password for you with your answers("))
 	}
 
 	length := passwordLength
 	useDigits := useDigitsAnswer
-	useLetters := useLettersAnswer
 	specialSymbols := specialSymbolsAnswer
 
-	password := generatePassword(length, useDigits, useLetters, specialSymbols)
+	password := generatePassword(length, useDigits, specialSymbols)
 
 	passFile.WriteString(forWhat + " : " + password + "\n")
 
